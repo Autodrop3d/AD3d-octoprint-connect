@@ -7,7 +7,7 @@ This plugin allows to connect your OctoPrint instance to the [Autodrop3D](https:
 Install via the bundled [Plugin Manager](https://docs.octoprint.org/en/master/bundledplugins/pluginmanager.html)
 or manually using this URL:
 
-    https://github.com/Autodrop3d/OctoPrint-Autodrop3D/archive/master.zip
+    https://github.com/Autodrop3d/AD3d-octoprint-connect/archive/master.zip
 
 ## Settings
 

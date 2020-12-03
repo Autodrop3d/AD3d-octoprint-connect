@@ -1,0 +1,21 @@
+#settings_plugin_autodrop3d {
+    padding-right: 20px;
+}
+
+#navbar_plugin_autodrop3d > a > i.disabled {
+    opacity: 0.5;
+}
+
+#settings_plugin_autodrop3d button.add-on {
+    height: 30px;
+    padding: revert;
+}
+
+#navbar_plugin_autodrop3d a.autodrop3d {
+    background-image: url("/plugin/autodrop3d/static/img/autodrop-icon.png") !important;
+    background-repeat: no-repeat !important;
+    background-position: center;
+    background-size: contain;
+    width: 15px;
+}
+

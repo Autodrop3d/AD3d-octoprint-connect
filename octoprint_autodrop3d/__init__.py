@@ -357,7 +357,7 @@ class autodrop3d(
 
 	def get_settings_defaults(self):
 		return dict(
-			name="", key="", server="http://23.227.167.37:3000/api/jobsQueue/printerRequestJob", polling_enabled=True,
+			name="", key="", server="https://go.autodrop3d.com/api/jobsQueue/printerRequestJob", polling_enabled=True,
 			polling_interval=10, custom_script="", notify_complete=False, use_gpio=False, at_commands_to_monitor=[]
 		)
 

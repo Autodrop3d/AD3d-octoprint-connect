@@ -28,6 +28,7 @@ class autodrop3d(
 		self.autodrop3d_enabled = False
 		self.printer_id = None
 		self.printer_api_key = None
+		self.auto_eject_active = False
 		self.server_url = None
 		self.at_commands_to_monitor = None
 		self.polling_interval = 0
@@ -51,6 +52,7 @@ class autodrop3d(
 	def initialize_settings(self):
 			self.job_queue_polling = self._settings.get_boolean(["polling_enabled"])
 			self.autodrop3d_enabled = self.job_queue_polling
+			self.auto_eject_active = self._settings.get_boolean(["auto_eject_active"])
 			self._snapshot_url = self._settings.global_get(["webcam", "snapshot"])
 			self._snapshot_timeout = self._settings.global_get_int(["webcam", "snapshotTimeout"])
 			self._snapshot_validate_ssl = self._settings.global_get_boolean(["webcam", "snapshotSslValidation"])
@@ -160,8 +162,9 @@ class autodrop3d(
 
 	def job_queue_worker(self):
 		if not self.bed_clear:
-			self._logger.debug("bypass polling since bed is not clear")
-			return
+			if not self.auto_eject_active:
+				self._logger.debug("bypass polling since bed is not clear")
+				return
 		self._logger.debug("polling job queue")
 		download_url = "{}?name={}&key={}&ip={}".format(
 			self.server_url,

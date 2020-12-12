@@ -16,6 +16,12 @@
             <input type="text" class="input-block" data-bind="value: settingsViewModel.settings.plugins.autodrop3d.key"/>
         </div>
     </div>
+    <div class="control-group">
+        <label class="control-label">{{ _('Auto Eject Active') }}</label>
+        <div class="controls">
+            <input class="input-checkbox" type="checkbox" data-bind="checked: settingsViewModel.settings.plugins.autodrop3d.auto_eject_active"/>
+        </div>
+    </div>
     <div class="row-fluid"><small><a href="#" class="muted" data-bind="toggleContent: { class: 'fa-caret-right fa-caret-down', container: '#settings_plugin_autodrop3d .hide' }"><i class="fas fa-caret-right"></i> Advanced options</a></small></div>
     <div class="row-fluid hide">
         <div class="control-group">

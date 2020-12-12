@@ -166,31 +166,8 @@ class autodrop3d(
 				self._logger.debug("bypass polling since bed is not clear")
 				return
 			else:
-				try: # hack for windows where file can't be remove because it's in use
-					self._file_manager.remove_file("local", self.current_job + ".gcode" )
-				except Exception as e:
-					self._logger.error("unabled to delete job file \"{}\" from local storage".format(self.current_job + ".gcode" ))
-					pass
 				self.bed_clear = True
-				if self.job_status in [Events.PRINT_FAILED, Events.PRINT_CANCELLED]:
-					self.job_status = None
-				self.job_status = None
-				download_url = "{}?name={}&key={}&ip={}&jobID={}&stat=Done".format(
-					self.server_url,
-					self.printer_id,
-					self.printer_api_key,
-					self._get_ip(),
-					self.regex_jobid_extract.sub("\\1", self.current_job)
-				)
-				response = requests.get(download_url)
-				self.current_job = None
-				if response.status_code == 200:
-					self._logger.debug("server responded: {}".format(response.text))
-					return flask.jsonify({"bed_cleared": True, "enabled": self.autodrop3d_enabled})
-				else:
-					self._logger.debug("server responded: {}".format(response.text))
-					return flask.jsonify({"unknown response": data["filename"]})
-
+				return
 
 
 

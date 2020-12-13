@@ -186,7 +186,7 @@ class autodrop3d(
 				self.current_job = None
 				if response.status_code == 200:
 					self._logger.debug("server responded: {}".format(response.text))
-					return flask.jsonify({"bed_cleared": True, "enabled": self.autodrop3d_enabled})
+					#return flask.jsonify({"bed_cleared": True, "enabled": self.autodrop3d_enabled})
 				else:
 					self._logger.debug("server responded: {}".format(response.text))
 					return flask.jsonify({"unknown response": data["filename"]})

@@ -115,7 +115,11 @@ class autodrop3d(
 				self._logger.debug("writing notify_complete.txt")
 				with open(self.get_plugin_data_folder() + "/" + "notifyComplete.txt", "w") as f:
 					f.write("")
-			self._plugin_manager.send_plugin_message(self._identifier, dict(filename=payload["path"], status=event))
+			if len(self._settings.get(["custom_script"])) > 0:
+				self._logger.debug("{}".format(self._settings.get(["custom_script"])))
+				exec("{}".format(self._settings.get(["custom_script"])))
+			if not self.auto_eject_active:
+				self._plugin_manager.send_plugin_message(self._identifier, dict(filename=payload["path"], status=event))
 		if event == Events.PRINT_CANCELLED and self.current_job:
 			self._logger.debug("print job event {} for \"{}\"".format(event, payload["path"]))
 		if event == Events.SETTINGS_UPDATED:
@@ -154,11 +158,14 @@ class autodrop3d(
 					if _status == "canceled":
 						_status = 0
 					self._logger.debug("print status {} at {:0.2f}%".format(response.text, _status))
-					self._plugin_manager.send_plugin_message(self._identifier, dict(filename=_current_data["job"]["file"]["path"], status=Events.PRINT_CANCELLED))
+					if not self.auto_eject_active:
+						self._plugin_manager.send_plugin_message(self._identifier, dict(filename=_current_data["job"]["file"]["path"], status=Events.PRINT_CANCELLED))
 			else:
 				self._logger.debug("error communicating: {}".format(response.text))
 				# notify the UI in case of download error
 				self._plugin_manager.send_plugin_message(self._identifier, dict(error=response, status="ERROR"))
+
+	def delete_file(self, filename):
 
 	def job_queue_worker(self):
 		if not self.bed_clear:
@@ -189,8 +196,8 @@ class autodrop3d(
 					#return flask.jsonify({"bed_cleared": True, "enabled": self.autodrop3d_enabled})
 				else:
 					self._logger.debug("server responded: {}".format(response.text))
-					return flask.jsonify({"unknown response": data["filename"]})
-				return 
+					#return flask.jsonify({"unknown response": data["filename"]})
+				return
 
 
 

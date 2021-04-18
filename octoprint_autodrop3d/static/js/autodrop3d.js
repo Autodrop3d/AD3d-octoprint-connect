@@ -64,8 +64,8 @@ $(function() {
 
         self.onDataUpdaterPluginMessage = function(plugin, data) {
             if (plugin != "autodrop3d") {
-				return;
-			}
+                return;
+            }
 
             if(data.status){
                 self.job_file(data.filename);

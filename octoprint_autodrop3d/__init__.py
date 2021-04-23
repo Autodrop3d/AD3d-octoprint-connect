@@ -165,7 +165,7 @@ class autodrop3d(
 				# notify the UI in case of download error
 				self._plugin_manager.send_plugin_message(self._identifier, dict(error=response, status="ERROR"))
 
-	def delete_file(self, filename):
+	#def delete_file(self, filename):
 
 	def job_queue_worker(self):
 		if not self.bed_clear:

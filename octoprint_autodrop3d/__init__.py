@@ -295,11 +295,14 @@ class autodrop3d(
 		self._logger.debug("continue polling: {}".format(self.autodrop3d_enabled))
 		return self.autodrop3d_enabled
 
+	def _polling_canceled(self):
+		self._logger.debug("polling canceled, autodrop3d enabled? {}".format(self.autodrop3d_enabled))
+
 	def start_repeated_timer(self, timer=None, callback=None):
 		try:
 			if timer is None and callback is not None:
 				self._logger.debug("creating repeated timer")
-				timer = RepeatedTimer(self.polling_interval, callback, run_first=True, condition=self._continue_polling)
+				timer = RepeatedTimer(self.polling_interval, callback, run_first=True, condition=self._continue_polling, on_condition_false=self._polling_canceled)
 				timer.start()
 			return True, timer
 		except Exception:

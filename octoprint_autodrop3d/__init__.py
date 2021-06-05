@@ -319,14 +319,6 @@ class autodrop3d(
 		except Exception:
 			return True, timer
 
-	# ~~ @ command processing hook on queuing phase, no long running processes, thread
-
-	def at_command_handler(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
-		if not any(map(lambda r: r["command"] == command, self.at_commands_to_monitor)):
-			return
-
-
-
 	# ~~ gcode queing hook
 
 	def gcode_queueing_handler(self, comm_instance, phase, cmd, cmd_type, gcode, *args, ** kwargs):
@@ -348,7 +340,10 @@ class autodrop3d(
 			for at_command in self.at_commands_to_monitor:
 				if at_command["command"] == command:
 					self._logger.debug("received @ command: \"{}\" with parameters: \"{}\"".format(command, parameters))
-					exec("{}".format(at_command["python"]))
+					try:
+						exec("{}".format(at_command["python"]))
+					except Exception as e:
+						self._logger.debug(e)
 					if self._printer.is_paused():
 						self._printer.resume_print()
 		return line

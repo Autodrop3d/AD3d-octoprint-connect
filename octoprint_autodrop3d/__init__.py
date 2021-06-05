@@ -344,7 +344,7 @@ class autodrop3d(
 						exec("{}".format(at_command["python"]))
 					except Exception as e:
 						self._logger.debug(e)
-					if self._printer.is_paused():
+					if self._printer.is_paused() or self._printer.is_pausing():
 						self._printer.resume_print()
 		return line
 

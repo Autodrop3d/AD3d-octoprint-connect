@@ -328,7 +328,7 @@ class autodrop3d(
 		if not any(map(lambda r: r["command"] == cmd.split()[0].replace("@", ""), self.at_commands_to_monitor)):
 			return
 
-		return ["M400", "M118 AUTODROP3D {}".format(cmd.split()[0].replace("@", "")), "@pause"]
+		return ["M400", "M118 AUTODROP3D {}".format(cmd.replace("@", "")), "@pause"]
 
 	def exec_custom_python(self, python_script, parameters):
 		self._logger.debug("Attempting to run custom python script: {} with parameters {}".format(python_script, parameters))

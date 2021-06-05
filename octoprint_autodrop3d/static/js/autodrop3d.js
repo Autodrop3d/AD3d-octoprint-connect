@@ -15,6 +15,7 @@ $(function() {
         self.job_file = ko.observable(false);
         self.job_status = ko.observable(false);
         self.new_at_command = ko.observable('');
+        self.selected_command = ko.observable();
         self.print_events = {PrintStarted: 'started', PrintCancelled: 'has been canceled', PrintFailed: 'has failed', PrintDone: 'complete', Error: 'errored'}
         self.job_id = ko.pureComputed(function(){
             return self.job_file().replace(/^.*\/(.*).gcode$/gm, '$1');
@@ -178,8 +179,16 @@ $(function() {
         }
 
         self.add_at_command = function(){
-            self.settingsViewModel.settings.plugins.autodrop3d.at_commands_to_monitor.push(self.new_at_command());
+            self.selected_command({'command': ko.observable(self.new_at_command()), 'python': ko.observable('')});
+            self.settingsViewModel.settings.plugins.autodrop3d.at_commands_to_monitor.push(self.selected_command());
+            $('#autodrop3d_command_editor').modal('show');
             self.new_at_command('');
+        }
+
+        self.edit_at_command = function(data){
+            self.selected_command(data);
+            $('#autodrop3d_command_editor').modal('show');
+            console.log(self.selected_command());
         }
 
         self.remove_at_command = function(data){
@@ -190,6 +199,6 @@ $(function() {
     OCTOPRINT_VIEWMODELS.push({
         construct: autodrop3dViewModel,
         dependencies: [ "settingsViewModel" ],
-        elements: [ "#settings_plugin_autodrop3d", "#navbar_plugin_autodrop3d" ]
+        elements: [ "#settings_plugin_autodrop3d", "#navbar_plugin_autodrop3d", "#autodrop3d_command_editor" ]
     });
 });

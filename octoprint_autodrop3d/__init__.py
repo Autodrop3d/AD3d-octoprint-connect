@@ -4,6 +4,8 @@ from __future__ import absolute_import
 import base64
 import io
 import re
+import time
+
 import flask
 import octoprint.plugin
 import requests
@@ -345,6 +347,9 @@ class autodrop3d(
 					except Exception as e:
 						self._logger.debug(e)
 					if self._printer.is_paused() or self._printer.is_pausing():
+						while self._printer.is_pausing():
+							self._logger.debug("printer is pausing, retrying")
+							time.sleep(1)
 						self._printer.resume_print()
 		return line
 

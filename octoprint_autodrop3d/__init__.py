@@ -4,6 +4,9 @@ from __future__ import absolute_import
 import base64
 import io
 import re
+import threading
+import time
+
 import flask
 import octoprint.plugin
 import requests
@@ -327,6 +330,19 @@ class autodrop3d(
 
 		return ["M400", "M118 AUTODROP3D {}".format(cmd.split()[0].replace("@", "")), "@pause"]
 
+	def exec_custom_python(self, python_script, parameters):
+		self._logger.debug("Attempting to run custom python script: {} with parameters {}".format(python_script, parameters))
+		try:
+			exec("{}".format(python_script))
+		except Exception as e:
+			self._logger.debug(e)
+
+		if self._printer.is_paused() or self._printer.is_pausing():
+			while self._printer.is_pausing():
+				self._logger.debug("printer is pausing, retrying")
+				time.sleep(1)
+			self._printer.resume_print()
+
 	# ~~ gcode received hook
 
 	def gcode_received_handler(self, comm, line, *args, **kwargs):
@@ -340,12 +356,9 @@ class autodrop3d(
 			for at_command in self.at_commands_to_monitor:
 				if at_command["command"] == command:
 					self._logger.debug("received @ command: \"{}\" with parameters: \"{}\"".format(command, parameters))
-					try:
-						exec("{}".format(at_command["python"]))
-					except Exception as e:
-						self._logger.debug(e)
-					if self._printer.is_paused():
-						self._printer.resume_print()
+					custom_python_thread = threading.Thread(target=self.exec_custom_python, args=(at_command["python"], parameters), daemon=True)
+					custom_python_thread.start()
+
 		return line
 
 	# ~~ SimpleApiPlugin mixin

@@ -31,6 +31,7 @@ class autodrop3d(
 		self.auto_eject_active = False
 		self.server_url = None
 		self.at_commands_to_monitor = None
+		self.at_commands_to_process = {}
 		self.polling_interval = 0
 		self.job_queue_timer = None
 		self.job_queue_polling = False
@@ -320,11 +321,37 @@ class autodrop3d(
 
 	# ~~ @ command processing hook on queuing phase, no long running processes, thread
 
-	def custom_atcommand_handler(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
-		if command not in self.at_commands_to_monitor:
+	def at_command_handler(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
+		if not any(map(lambda r: r["command"] == command, self.at_commands_to_monitor)):
 			return
 
-		self._logger.debug("received @ command: \"{}\" with parameters: \"{}\"".format(command, parameters))
+
+
+	# ~~ gcode queing hook
+
+	def gcode_queueing_handler(self, comm_instance, phase, cmd, cmd_type, gcode, *args, ** kwargs):
+		if not any(map(lambda r: r["command"] == cmd.split()[0].replace("@", ""), self.at_commands_to_monitor)):
+			return
+
+		return ["M400", "M118 AUTODROP3D {}".format(cmd.split()[0].replace("@", "")), "@pause"]
+
+	# ~~ gcode received hook
+
+	def gcode_received_handler(self, comm, line, *args, **kwargs):
+		if not line.startswith("AUTODROP3D"):
+			return line
+
+		command_list = line.split()[1:]
+		command = command_list[0]
+		parameters = command_list[1:]
+		if command:
+			for at_command in self.at_commands_to_monitor:
+				if at_command["command"] == command:
+					self._logger.debug("received @ command: \"{}\" with parameters: \"{}\"".format(command, parameters))
+					exec("{}".format(at_command["python"]))
+					if self._printer.is_paused():
+						self._printer.resume_print()
+		return line
 
 	# ~~ SimpleApiPlugin mixin
 
@@ -455,6 +482,7 @@ def __plugin_load__():
 	global __plugin_hooks__
 	__plugin_hooks__ = {
 		"octoprint.access.permissions": __plugin_implementation__.get_additional_permissions,
-		"octoprint.comm.protocol.atcommand.queuing": __plugin_implementation__.custom_atcommand_handler,
+		"octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.gcode_queueing_handler,
+		"octoprint.comm.protocol.gcode.received": __plugin_implementation__.gcode_received_handler,
 		"octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
 	}

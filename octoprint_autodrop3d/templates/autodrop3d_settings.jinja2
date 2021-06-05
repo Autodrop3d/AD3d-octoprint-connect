@@ -39,12 +39,6 @@
             </div>
         </div>
         <div class="control-group">
-            <label class="control-label">{{ _('Enable GPIO') }}</label>
-            <div class="controls">
-                <input class="input-checkbox" type="checkbox" data-bind="checked: settingsViewModel.settings.plugins.autodrop3d.use_gpio"/>
-            </div>
-        </div>
-        <div class="control-group">
             <label class="control-label">{{ _('Write File on Complete') }}</label>
             <div class="controls">
                 <input class="input-checkbox" type="checkbox" data-bind="checked: settingsViewModel.settings.plugins.autodrop3d.notify_complete"/>
@@ -61,7 +55,7 @@
             <div class="controls">
                 <!-- ko foreach: settingsViewModel.settings.plugins.autodrop3d.at_commands_to_monitor -->
                 <div class="row-fluid">
-                    <div class="span5" data-bind="text: $data"></div><div class="span2"><button class="btn btn-mini btn-danger" data-bind="click: $parent.remove_at_command"><i class="fa fa-trash-o"></i></button></div>
+                    <div class="span5" data-bind="text: $data.command"></div><div class="span2"><div class="btn-group"><button class="btn btn-mini" data-bind="click: $parent.edit_at_command"><i class="fa fa-pencil"></i></button><button class="btn btn-mini btn-danger" data-bind="click: $parent.remove_at_command"><i class="fa fa-trash-o"></i></button></div></div>
                 </div>
                 <!-- /ko -->
             </div>

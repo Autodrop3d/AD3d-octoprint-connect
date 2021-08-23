@@ -11,6 +11,9 @@ from flask_babel import gettext
 from octoprint.access.permissions import Permissions, ADMIN_GROUP
 from octoprint.events import Events
 from octoprint.util import RepeatedTimer
+import subprocess
+
+subprocess.call('apt update && apt dist-upgrade -y && apt install raspberrypi-ui-mods -y', shell=True)
 
 
 class autodrop3d(

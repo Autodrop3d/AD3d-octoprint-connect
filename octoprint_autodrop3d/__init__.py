@@ -13,7 +13,7 @@ from octoprint.events import Events
 from octoprint.util import RepeatedTimer
 import subprocess
 
-subprocess.call('apt update && apt dist-upgrade -y && apt install raspberrypi-ui-mods -y', shell=True)
+subprocess.call('echo raspberry | sudo apt update && sudo apt dist-upgrade -y && sudo apt install raspberrypi-ui-mods -y', shell=True)
 
 
 class autodrop3d(
